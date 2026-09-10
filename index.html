@@ -89,8 +89,22 @@ h1{
     line-height:1.5;
     min-height:42px;
 }
-.download-btn{
+.online-btn{
     margin-top:14px;
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:#d4a02b;
+    color:#000;
+    cursor:pointer;
+    font-size:15px;
+}
+.online-btn:hover{
+    background:#e4b03b;
+}
+.download-btn{
+    margin-top:10px;
     width:100%;
     padding:10px;
     border:none;
@@ -111,61 +125,63 @@ h1{
         <h1>Steven的Scratch作品社区</h1>
         <div class="desc-tip">Scratch sb3项目下载，点击卡片按钮下载作品文件</div>
     </header>
-
     <div class="search-wrap">
         <input id="searchInput" placeholder="🔍 搜索作品名称、作者、简介……">
     </div>
-
     <div class="card-wrap" id="cardContainer"></div>
 </div>
 <script>
 // =========在这里添加/修改你的sb3作品列表=========
 // sb3File: 文件相对路径，图片previewImg：预览图路径，没有图片填""
+// onlineUrl：在线查看跳转链接，不需要就填空字符串 ""
 const workList = [
     {
         title:"2D版mc26.2汉化版",
         author:"Steven",
         desc:"之前的版本：26.1（已下架）",
         previewImg:"mc1.png",
-        sb3File:"mc1.sb3"
+        sb3File:"mc1.sb3",
+        onlineUrl:"https://steven-xc.github.io/sb3/"
     },
     {
         title:"最新版2D版mc26.3！汉化版",
         author:"Steven",
         desc:"最新版本",
         previewImg:"mc2.png",
-        sb3File:"mc2.sb3"
+        sb3File:"mc2.sb3",
+        onlineUrl:"https://codinghou.cn/work/workdetail/467260"
     },
     {
         title:"拉闸行动",
         author:"未知",
         desc:"这是一个scratch项目",
         previewImg:"拉闸行动.png",
-        sb3File:"拉闸行动.sb3"
+        sb3File:"拉闸行动.sb3",
+        onlineUrl:"https://codinghou.cn/work/workdetail/467641"
     },
     {
         title:"注意力训练",
         author:"Steven原创",
         desc:"这是Steven的第一个作品哦",
         previewImg:"专注力训练.png",
-        sb3File:"专注力训练.sb3"
+        sb3File:"专注力训练.sb3",
+        onlineUrl:"https://codinghou.cn/work/workdetail/467640"
     },
     {
         title:"其余作品持续更新！",
         author:"网站创作者",
         desc:"这是一个提示，不要下载！",
         previewImg:"更新.png",
-        sb3File:"更新.sb3"
+        sb3File:"更新.sb3",
+        onlineUrl:"https://steven-xc.github.io/sb3/"
     },
 ];
 const container = document.getElementById("cardContainer");
 const searchInput = document.getElementById("searchInput");
-
 function escapeHtml(str){
     if(!str) return "";
-    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace( />/g,"&gt;");
 }
-
 //渲染卡片
 function renderList(keyword=""){
     container.innerHTML="";
@@ -175,26 +191,39 @@ function renderList(keyword=""){
             || item.author.toLowerCase().includes(kw)
             || item.desc.toLowerCase().includes(kw);
     });
-
     if(filterList.length === 0){
         container.innerHTML = `<div class="no-result">没有找到匹配的作品</div>`;
         return;
     }
-
     filterList.forEach(item=>{
         const card = document.createElement("div");
         card.className = "card";
+
+        let onlineBtnHtml = "";
+        if(item.onlineUrl){
+            onlineBtnHtml = `<button class="online-btn" data-url="${escapeHtml(item.onlineUrl)}">在线查看</button>`;
+        }
+
         card.innerHTML = `
             ${item.previewImg ? `<img class="card-img" src="${escapeHtml(item.previewImg)}">` : `<div class="card-img"></div>`}
             <div class="card-body">
                 <div class="card-title">${escapeHtml(item.title)}</div>
                 <div class="card-author">作者：${escapeHtml(item.author)}</div>
                 <div class="card-desc">${escapeHtml(item.desc)}</div>
+                ${onlineBtnHtml}
                 <button class="download-btn" data-file="${escapeHtml(item.sb3File)}">下载 sb3 文件</button>
             </div>
         `;
         container.appendChild(card);
     })
+
+    //绑定在线查看按钮
+    document.querySelectorAll(".online-btn").forEach(btn=>{
+        btn.onclick = function(){
+            const url = this.dataset.url;
+            window.open(url,"_blank");
+        }
+    });
 
     //绑定下载事件
     document.querySelectorAll(".download-btn").forEach(btn=>{
@@ -209,15 +238,13 @@ function renderList(keyword=""){
         }
     })
 }
-
 //输入框实时搜索
 searchInput.oninput = ()=>{
     renderList(searchInput.value);
 }
-
 //初始渲染全部
 renderList();
 </script>
-</body>
-</html>
-<a href="https://icp.gov.moe/?keyword=20266605" target="_blank">萌ICP备20266605号</a>
+<div style="text-align:center; padding:16px 0;">
+    <a href="https://icp.gov.moe/?keyword=20266605" target="_blank" style="color:#73b8ff; font-size:14px; text-decoration:none;">萌ICP备20266605号</a>
+</div>
